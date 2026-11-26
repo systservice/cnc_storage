@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FIG 2. OXIDE RACK</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --line-color: #00ff9d;
+            --text-color: #a0a0a0;
+            --font-family: 'Courier New', Courier, monospace;
+            --line-style: 1px dashed var(--line-color);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-family);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            padding: 40px;
+        }
+
+        .title {
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            color: #888;
+        }
+
+        /* Основной контейнер для 3D эффекта */
+        .rack-scene {
+            perspective: 1000px;
+            width: 500px;
+            height: 600px;
+            position: relative;
+        }
+
+        /* Задняя панель (сетка) */
+        .rack-back {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(4, 1fr);
+            border: var(--line-style);
+            border-right: none;
+            border-bottom: none;
+            /* Сдвигаем назад для эффекта объема */
+            transform: translateZ(-50px) translateX(20px) translateY(-20px);
+        }
+
+        .cell {
+            border-right: var(--line-style);
+            border-bottom: var(--line-style);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        /* Текст внутри ячеек */
+        .label {
+            font-size: 14px;
+            color: #b0b0b0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 2;
+            position: relative;
+        }
+
+        /* Создание эффекта "проводов" или углублений внутри ячеек */
+        .cell::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            height: 80%;
+            border-left: var(--line-style);
+            opacity: 0.6;
+        }
+        .cell::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            width: 80%;
+            border-top: var(--line-style);
+            opacity: 0.6;
+        }
+
+        /* Передняя панель (сетка) */
+        .rack-front {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(4, 1fr);
+            border: var(--line-style);
+            box-sizing: border-box;
+            background-color: transparent;
+            z-index: 10;
+            /* Оставляем в передней плоскости */
+            transform: translateZ(20px) translateX(-10px) translateY(10px);
+        }
+
+        /* Линии, соединяющие переднюю и заднюю панели (углы) */
+        .connector {
+            position: absolute;
+            background: var(--line-color);
+            width: 1px;
+            height: 1px;
+            border-top: 1px dashed var(--line-color);
+            border-left: 1px dashed var(--line-color);
+            transform-origin: top left;
+            z-index: 1;
+        }
+
+        /* Левая боковая грань */
+        .side-face-left {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-left: 1px dashed var(--line-color);
+            transform: skewY(-10deg) translateY(10px);
+            transform-origin: top left;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Верхняя грань */
+        .side-face-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-top: 1px dashed var(--line-color);
+            transform: skewX(-10deg) translateX(10px);
+            transform-origin: top left;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Стилизация подписей для точного позиционирования */
+        .cell:nth-child(1) .label { /* SERVER */ }
+        .cell:nth-child(2) .label { /* SP OS */ }
+        .cell:nth-child(3) .label { /* STORAGE */ }
+        .cell:nth-child(4) .label { /* ROT */ }
+        .cell:nth-child(5) .label { /* NETWORK */ }
+        .cell:nth-child(6) .label { /* HOST OS */ }
+        .cell:nth-child(7) .label { /* VIRT */ }
+        .cell:nth-child(8) .label { /* POWER */ }
+
+        /* Добавляем небольшие декоративные элементы (плюсы на пересечениях) */
+        .crosshair {
+            position: absolute;
+            color: var(--line-color);
+            font-size: 16px;
+            font-weight: 100;
+            line-height: 1;
+            z-index: 20;
+        }
+        
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="title">FIG 2. OXIDE RACK</div>
+    
+    <div class="rack-scene">
+        <!-- Задняя сетка -->
+        <div class="rack-back">
+            <div class="cell"><span class="label">[SERVER]</span></div>
+            <div class="cell"><span class="label">[SP OS]</span></div>
+            <div class="cell"><span class="label">[STORAGE]</span></div>
+            <div class="cell"><span class="label">[ROT]</span></div>
+            <div class="cell"><span class="label">[NETWORK]</span></div>
+            <div class="cell"><span class="label">[HOST OS]</span></div>
+            <div class="cell"><span class="label">[VIRT]</span></div>
+            <div class="cell"><span class="label">[POWER]</span></div>
+        </div>
+
+        <!-- Передняя сетка -->
+        <div class="rack-front">
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+            <div class="cell"></div>
+        </div>
+
+        <!-- Декоративные линии для соединения углов (упрощенно) -->
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;">
+             <!-- Верхняя левая линия -->
+             <div style="position: absolute; top: 0; left: 0; width: 20px; height: 20px; border-bottom: 1px dashed var(--line-color); border-right: 1px dashed var(--line-color); transform: skewY(45deg) translate(0px, -10px); opacity: 0.5;"></div>
+             <!-- Нижняя левая линия -->
+             <div style="position: absolute; bottom: 0; left: 0; width: 20px; height: 20px; border-top: 1px dashed var(--line-color); border-right: 1px dashed var(--line-color); transform: skewY(-45deg) translate(0px, 10px); opacity: 0.5;"></div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
